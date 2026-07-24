@@ -353,10 +353,11 @@ export default function Home() {
           </span>
         </a>
 
-        {/* Center menu links — hidden below 1024px */}
-        <div className="hidden lg:flex items-center gap-6">
+        {/* Center menu links — hidden below 1280px */}
+        <div className="hidden xl:flex items-center gap-6">
           <a href="#about" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">About</a>
           <a href="#achievements" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Achievements</a>
+          <a href="#works" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Works</a>
           <a href="#dashboard" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Marketing Console</a>
           <a href="#experience" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Experience</a>
           <a href="#tools" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Tools</a>
@@ -396,10 +397,10 @@ export default function Home() {
             Email CV
           </a>
 
-          {/* Hamburger Menu Toggle Button (Visible below 1024px) */}
+          {/* Hamburger Menu Toggle Button (Visible below 1280px) */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 rounded-md bg-surface-1 border border-hairline hover:bg-surface-2 transition-all cursor-pointer flex items-center justify-center"
+            className="xl:hidden p-2 rounded-md bg-surface-1 border border-hairline hover:bg-surface-2 transition-all cursor-pointer flex items-center justify-center"
             aria-label="Toggle navigation menu"
           >
             {isMenuOpen ? (
@@ -417,9 +418,10 @@ export default function Home() {
 
       {/* Mobile Drawer Dropdown Panel */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-canvas/95 backdrop-blur-md border-b border-hairline p-6 flex flex-col gap-4 animate-fade-in shadow-xl">
+        <div className="xl:hidden fixed top-14 left-0 right-0 z-40 bg-canvas/95 backdrop-blur-md border-b border-hairline p-6 flex flex-col gap-4 animate-fade-in shadow-xl">
           <a href="#about" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">About</a>
           <a href="#achievements" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Achievements</a>
+          <a href="#works" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Works</a>
           <a href="#dashboard" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Marketing Console</a>
           <a href="#experience" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Experience</a>
           <a href="#tools" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Tools</a>
@@ -605,6 +607,80 @@ export default function Home() {
             </span>
             <span className="text-sm text-ink-subtle mt-1.5">Video Sessions Edited</span>
             <p className="text-xs text-ink-tertiary mt-2">Increased aggregate views by 60% with anchor presenter structures and high-pace CapCut sequences.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* WORKS / PORTFOLIO SECTION */}
+      <section id="works" className="py-24 border-b border-hairline bg-surface-1/10 reveal">
+        <div className="max-w-[1280px] mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16 reveal-stagger">
+            <span className="text-[13px] font-medium tracking-[0.4px] text-primary uppercase">Portfolio Showcase</span>
+            <h2 className="text-3xl md:text-[40px] font-semibold tracking-[-1.0px] leading-tight text-ink mt-2">
+              Featured Works &amp; Campaigns
+            </h2>
+            <div className="inline-flex items-center gap-3 mt-4 px-4 py-2 bg-surface-1 border border-hairline rounded-full shadow-sm">
+              <span className="text-xs sm:text-sm text-ink-muted">Total Campaigns &amp; Works Executed:</span>
+              <span className="text-sm sm:text-base font-semibold text-primary font-mono">
+                <AnimatedCounter target={150} suffix="+" />
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
+            {/* Work 1 */}
+            <div className="bg-surface-1 border border-hairline hover:border-hairline-strong rounded-xl overflow-hidden card-hover-lift flex flex-col justify-between p-6">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <span className="text-[10px] font-mono font-medium bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">Lead Gen</span>
+                  <span className="text-xs font-semibold text-semantic-success bg-semantic-success/10 px-2 py-0.5 rounded font-mono">ROI 4.8x</span>
+                </div>
+                <h3 className="text-base font-bold text-ink mb-2">B2B Business Setup Lead Funnel</h3>
+                <p className="text-xs text-ink-subtle leading-relaxed mb-4">
+                  Custom lead-acquisition system targeting corporate service seekings, business formation leads and trade licensing queries in Dubai.
+                </p>
+              </div>
+              <div className="flex justify-between items-center pt-4 border-t border-hairline/60 font-mono text-[10px] text-ink-muted">
+                <span>Client: Links Consultants</span>
+                <span className="font-semibold text-ink">320 Leads Captured</span>
+              </div>
+            </div>
+
+            {/* Work 2 */}
+            <div className="bg-surface-1 border border-hairline hover:border-hairline-strong rounded-xl overflow-hidden card-hover-lift flex flex-col justify-between p-6">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <span className="text-[10px] font-mono font-medium bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">SEO Optimization</span>
+                  <span className="text-xs font-semibold text-semantic-success bg-semantic-success/10 px-2 py-0.5 rounded font-mono">CTR +35%</span>
+                </div>
+                <h3 className="text-base font-bold text-ink mb-2">Local SEO Dominance Plan</h3>
+                <p className="text-xs text-ink-subtle leading-relaxed mb-4">
+                  Structured schema setup, optimized map citations and organic localized content ranking targeting business licensing query segments.
+                </p>
+              </div>
+              <div className="flex justify-between items-center pt-4 border-t border-hairline/60 font-mono text-[10px] text-ink-muted">
+                <span>Domain Focus: Google.ae</span>
+                <span className="font-semibold text-ink">#2 Ranked Term</span>
+              </div>
+            </div>
+
+            {/* Work 3 */}
+            <div className="bg-surface-1 border border-hairline hover:border-hairline-strong rounded-xl overflow-hidden card-hover-lift flex flex-col justify-between p-6">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <span className="text-[10px] font-mono font-medium bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">Video Ads</span>
+                  <span className="text-xs font-semibold text-semantic-success bg-semantic-success/10 px-2 py-0.5 rounded font-mono">Views +60%</span>
+                </div>
+                <h3 className="text-base font-bold text-ink mb-2">Dubai B2B Promo Videography</h3>
+                <p className="text-xs text-ink-subtle leading-relaxed mb-4">
+                  Shot, presented and edited high-pace video advertising hooks tailored to boost conversion rates and outbound landing page clicks.
+                </p>
+              </div>
+              <div className="flex justify-between items-center pt-4 border-t border-hairline/60 font-mono text-[10px] text-ink-muted">
+                <span>Format: CapCut Edit</span>
+                <span className="font-semibold text-ink">50+ Campaigns Ran</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
