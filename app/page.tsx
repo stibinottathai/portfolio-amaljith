@@ -1,8 +1,30 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firestore";
+
+// ==========================================
+// Works / Portfolio Types & Defaults
+// ==========================================
+interface Work {
+  id: string;
+  title: string;
+  category: string;
+  badge: string;
+  description: string;
+  client: string;
+  stat: string;
+  images: string[];
+  videoUrl: string;
+  order: number;
+}
+
+const DEFAULT_WORKS: Work[] = [
+  { id: "d1", category: "Lead Gen", badge: "ROI 4.8x", title: "B2B Business Setup Lead Funnel", description: "Custom lead-acquisition system targeting corporate service seekings, business formation leads and trade licensing queries in Dubai.", client: "Client: Links Consultants", stat: "320 Leads Captured", images: [], videoUrl: "", order: 1 },
+  { id: "d2", category: "SEO Optimization", badge: "CTR +35%", title: "Local SEO Dominance Plan", description: "Structured schema setup, optimized map citations and organic localized content ranking targeting business licensing query segments.", client: "Domain Focus: Google.ae", stat: "#2 Ranked Term", images: [], videoUrl: "", order: 2 },
+  { id: "d3", category: "Video Ads", badge: "Views +60%", title: "Dubai B2B Promo Videography", description: "Shot, presented and edited high-pace video advertising hooks tailored to boost conversion rates and outbound landing page clicks.", client: "Format: CapCut Edit", stat: "50+ Campaigns Ran", images: [], videoUrl: "", order: 3 },
+];
 
 // ==========================================
 // Animation Helpers (useInView & AnimatedCounter)
@@ -183,6 +205,23 @@ export default function Home() {
   const [currentFrameText, setCurrentFrameText] = useState("Click Play to preview edit timeline...");
   const timelineAnimationRef = useRef<number | null>(null);
 
+  // Works state — real-time sync with Firestore
+  const [works, setWorks] = useState<Work[]>(DEFAULT_WORKS);
+
+  useEffect(() => {
+    const q = query(collection(db, "works"), orderBy("order", "asc"));
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        if (!snap.empty) {
+          setWorks(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Work, "id">) })));
+        }
+      },
+      (err) => console.error("Works fetch error:", err)
+    );
+    return () => unsub();
+  }, []);
+
   // Contact Form States
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
@@ -347,11 +386,16 @@ export default function Home() {
     }
   };
 
+  // Scroll to section without adding hash to URL
+  function scrollTo(id: string) {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
     <div className="min-h-screen bg-canvas text-ink font-sans selection:bg-primary selection:text-on-primary">
       {/* 1. TOP NAV COMPONENT */}
       <nav className="sticky top-0 z-50 flex items-center justify-between h-14 px-6 md:px-12 bg-canvas/80 backdrop-blur-md border-b border-hairline transition-all duration-200">
-        <a href="#hero" className="flex items-center gap-2 group">
+        <button onClick={() => scrollTo("hero")} className="flex items-center gap-2 group cursor-pointer bg-transparent border-none p-0">
           <div className="lg:hidden w-7 h-7 rounded-full overflow-hidden border border-hairline shrink-0">
             <img
               src="/profile_photo.png"
@@ -365,17 +409,17 @@ export default function Home() {
           <span className="font-display font-semibold tracking-[-0.4px] text-base group-hover:text-primary transition-colors">
             AMALJITH KJ
           </span>
-        </a>
+        </button>
 
         {/* Center menu links — hidden below 1280px */}
         <div className="hidden xl:flex items-center gap-6">
-          <a href="#about" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">About</a>
-          <a href="#achievements" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Achievements</a>
-          <a href="#works" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Works</a>
-          <a href="#dashboard" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Marketing Console</a>
-          <a href="#experience" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Experience</a>
-          <a href="#tools" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Tools</a>
-          <a href="#contact" className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors">Contact</a>
+          <button onClick={() => scrollTo("about")} className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors bg-transparent border-none cursor-pointer p-0">About</button>
+          <button onClick={() => scrollTo("achievements")} className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors bg-transparent border-none cursor-pointer p-0">Achievements</button>
+          <button onClick={() => scrollTo("works")} className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors bg-transparent border-none cursor-pointer p-0">Works</button>
+          <button onClick={() => scrollTo("dashboard")} className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors bg-transparent border-none cursor-pointer p-0">Marketing Console</button>
+          <button onClick={() => scrollTo("experience")} className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors bg-transparent border-none cursor-pointer p-0">Experience</button>
+          <button onClick={() => scrollTo("tools")} className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors bg-transparent border-none cursor-pointer p-0">Tools</button>
+          <button onClick={() => scrollTo("contact")} className="text-sm text-ink-subtle hover:text-ink link-underline transition-colors bg-transparent border-none cursor-pointer p-0">Contact</button>
         </div>
 
         {/* Right CTA */}
@@ -398,12 +442,12 @@ export default function Home() {
             )}
           </button>
 
-          <a 
-            href="#contact" 
-            className="hidden sm:inline-flex px-3.5 py-1.5 rounded-md bg-surface-1 border border-hairline text-sm font-medium hover:bg-surface-2 btn-transition"
+          <button
+            onClick={() => scrollTo("contact")}
+            className="hidden sm:inline-flex px-3.5 py-1.5 rounded-md bg-surface-1 border border-hairline text-sm font-medium hover:bg-surface-2 btn-transition cursor-pointer"
           >
             Get in Touch
-          </a>
+          </button>
           <a 
             href="mailto:amaljithkj023@gmail.com"
             className="hidden sm:inline-flex px-3.5 py-1.5 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary-hover btn-transition"
@@ -433,22 +477,21 @@ export default function Home() {
       {/* Mobile Drawer Dropdown Panel */}
       {isMenuOpen && (
         <div className="xl:hidden fixed top-14 left-0 right-0 z-40 bg-canvas/95 backdrop-blur-md border-b border-hairline p-6 flex flex-col gap-4 animate-fade-in shadow-xl">
-          <a href="#about" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">About</a>
-          <a href="#achievements" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Achievements</a>
-          <a href="#works" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Works</a>
-          <a href="#dashboard" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Marketing Console</a>
-          <a href="#experience" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Experience</a>
-          <a href="#tools" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40">Tools</a>
-          <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 pb-3">Contact</a>
+          <button onClick={() => { scrollTo("about"); setIsMenuOpen(false); }} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40 bg-transparent border-none cursor-pointer text-left w-full">About</button>
+          <button onClick={() => { scrollTo("achievements"); setIsMenuOpen(false); }} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40 bg-transparent border-none cursor-pointer text-left w-full">Achievements</button>
+          <button onClick={() => { scrollTo("works"); setIsMenuOpen(false); }} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40 bg-transparent border-none cursor-pointer text-left w-full">Works</button>
+          <button onClick={() => { scrollTo("dashboard"); setIsMenuOpen(false); }} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40 bg-transparent border-none cursor-pointer text-left w-full">Marketing Console</button>
+          <button onClick={() => { scrollTo("experience"); setIsMenuOpen(false); }} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40 bg-transparent border-none cursor-pointer text-left w-full">Experience</button>
+          <button onClick={() => { scrollTo("tools"); setIsMenuOpen(false); }} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 border-b border-hairline/40 bg-transparent border-none cursor-pointer text-left w-full">Tools</button>
+          <button onClick={() => { scrollTo("contact"); setIsMenuOpen(false); }} className="text-base font-medium text-ink hover:text-primary transition-colors py-2.5 pb-3 bg-transparent border-none cursor-pointer text-left w-full">Contact</button>
           
           <div className="flex flex-col sm:hidden gap-3 mt-2">
-            <a 
-              href="#contact"
-              onClick={() => setIsMenuOpen(false)} 
-              className="w-full text-center py-2.5 rounded-md bg-surface-1 border border-hairline text-sm font-medium hover:bg-surface-2 btn-transition"
+            <button
+              onClick={() => { scrollTo("contact"); setIsMenuOpen(false); }}
+              className="w-full text-center py-2.5 rounded-md bg-surface-1 border border-hairline text-sm font-medium hover:bg-surface-2 btn-transition cursor-pointer"
             >
               Get in Touch
-            </a>
+            </button>
             <a 
               href="mailto:amaljithkj023@gmail.com"
               onClick={() => setIsMenuOpen(false)}
@@ -509,19 +552,19 @@ export default function Home() {
               className="flex flex-wrap gap-4 animate-fade-in-up"
               style={{ animationDelay: "350ms", animationFillMode: "both" }}
             >
-              <a
-                href="#dashboard"
-                className="flex items-center justify-center gap-2 h-11 px-6 rounded-md bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-all btn-transition group"
+              <button
+                onClick={() => scrollTo("dashboard")}
+                className="flex items-center justify-center gap-2 h-11 px-6 rounded-md bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-all btn-transition group cursor-pointer border-none"
               >
                 Launch Marketing Console
                 <ArrowRightIcon />
-              </a>
-              <a
-                href="#experience"
-                className="flex items-center justify-center h-11 px-6 rounded-md border border-hairline bg-surface-1 hover:bg-surface-2 text-sm font-medium transition-all btn-transition"
+              </button>
+              <button
+                onClick={() => scrollTo("experience")}
+                className="flex items-center justify-center h-11 px-6 rounded-md border border-hairline bg-surface-1 hover:bg-surface-2 text-sm font-medium transition-all btn-transition cursor-pointer"
               >
                 Read Experience Log
-              </a>
+              </button>
             </div>
           </div>
 
@@ -642,59 +685,51 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
-            {/* Work 1 */}
-            <div className="bg-surface-1 border border-hairline hover:border-hairline-strong rounded-xl overflow-hidden card-hover-lift flex flex-col justify-between p-6">
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-[10px] font-mono font-medium bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">Lead Gen</span>
-                  <span className="text-xs font-semibold text-semantic-success bg-semantic-success/10 px-2 py-0.5 rounded font-mono">ROI 4.8x</span>
+            {works.map((work) => (
+              <div key={work.id} className="bg-surface-1 border border-hairline hover:border-hairline-strong rounded-xl overflow-hidden card-hover-lift flex flex-col">
+                {/* Cover image */}
+                {work.images?.length > 0 && (
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={work.images[0]}
+                      alt={work.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {work.images.length > 1 && (
+                      <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full font-mono">
+                        +{work.images.length - 1} more
+                      </span>
+                    )}
+                  </div>
+                )}
+                <div className="flex flex-col justify-between flex-1 p-6">
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="text-[10px] font-mono font-medium bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">{work.category}</span>
+                      <span className="text-xs font-semibold text-semantic-success bg-semantic-success/10 px-2 py-0.5 rounded font-mono">{work.badge}</span>
+                    </div>
+                    <h3 className="text-base font-bold text-ink mb-2">{work.title}</h3>
+                    <p className="text-xs text-ink-subtle leading-relaxed mb-4">{work.description}</p>
+                  </div>
+                  <div className="flex justify-between items-center pt-4 border-t border-hairline/60 font-mono text-[10px] text-ink-muted">
+                    <span>{work.client}</span>
+                    <div className="flex items-center gap-3">
+                      {work.videoUrl && (
+                        <a
+                          href={work.videoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:text-primary-hover font-semibold flex items-center gap-1 transition-colors"
+                        >
+                          ▶ Watch
+                        </a>
+                      )}
+                      <span className="font-semibold text-ink">{work.stat}</span>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-base font-bold text-ink mb-2">B2B Business Setup Lead Funnel</h3>
-                <p className="text-xs text-ink-subtle leading-relaxed mb-4">
-                  Custom lead-acquisition system targeting corporate service seekings, business formation leads and trade licensing queries in Dubai.
-                </p>
               </div>
-              <div className="flex justify-between items-center pt-4 border-t border-hairline/60 font-mono text-[10px] text-ink-muted">
-                <span>Client: Links Consultants</span>
-                <span className="font-semibold text-ink">320 Leads Captured</span>
-              </div>
-            </div>
-
-            {/* Work 2 */}
-            <div className="bg-surface-1 border border-hairline hover:border-hairline-strong rounded-xl overflow-hidden card-hover-lift flex flex-col justify-between p-6">
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-[10px] font-mono font-medium bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">SEO Optimization</span>
-                  <span className="text-xs font-semibold text-semantic-success bg-semantic-success/10 px-2 py-0.5 rounded font-mono">CTR +35%</span>
-                </div>
-                <h3 className="text-base font-bold text-ink mb-2">Local SEO Dominance Plan</h3>
-                <p className="text-xs text-ink-subtle leading-relaxed mb-4">
-                  Structured schema setup, optimized map citations and organic localized content ranking targeting business licensing query segments.
-                </p>
-              </div>
-              <div className="flex justify-between items-center pt-4 border-t border-hairline/60 font-mono text-[10px] text-ink-muted">
-                <span>Domain Focus: Google.ae</span>
-                <span className="font-semibold text-ink">#2 Ranked Term</span>
-              </div>
-            </div>
-
-            {/* Work 3 */}
-            <div className="bg-surface-1 border border-hairline hover:border-hairline-strong rounded-xl overflow-hidden card-hover-lift flex flex-col justify-between p-6">
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-[10px] font-mono font-medium bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">Video Ads</span>
-                  <span className="text-xs font-semibold text-semantic-success bg-semantic-success/10 px-2 py-0.5 rounded font-mono">Views +60%</span>
-                </div>
-                <h3 className="text-base font-bold text-ink mb-2">Dubai B2B Promo Videography</h3>
-                <p className="text-xs text-ink-subtle leading-relaxed mb-4">
-                  Shot, presented and edited high-pace video advertising hooks tailored to boost conversion rates and outbound landing page clicks.
-                </p>
-              </div>
-              <div className="flex justify-between items-center pt-4 border-t border-hairline/60 font-mono text-[10px] text-ink-muted">
-                <span>Format: CapCut Edit</span>
-                <span className="font-semibold text-ink">50+ Campaigns Ran</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>

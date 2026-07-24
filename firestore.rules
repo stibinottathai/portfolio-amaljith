@@ -2,13 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Enquiries: anyone can create, only authenticated users can read/update/delete
+    // Enquiries: anyone can create, only authenticated admin can read/update/delete
     match /enquiries/{docId} {
       allow create: if true;
       allow read, update, delete: if request.auth != null;
     }
 
-    // Deny all other collections by default
+    // Works: anyone can read (public portfolio), only authenticated admin can write
+    match /works/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Deny everything else
     match /{document=**} {
       allow read, write: if false;
     }
