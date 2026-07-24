@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firestore";
 
 // ==========================================
 // Animation Helpers (useInView & AnimatedCounter)
@@ -320,14 +322,26 @@ export default function Home() {
     { id: 4, phrase: "local marketing agency uae", rank: "#2", change: "▲ 19", volume: "3,200", difficulty: "Low", traffic: "410 clicks/mo", history: [28, 21, 15, 10, 5, 2] },
   ];
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formName.trim() && formEmail.trim()) {
+      try {
+        await addDoc(collection(db, "enquiries"), {
+          name: formName.trim(),
+          email: formEmail.trim(),
+          category: formCategory,
+          message: formMessage.trim(),
+          createdAt: serverTimestamp(),
+          read: false,
+        });
+      } catch (err) {
+        console.error("Failed to save enquiry:", err);
+      }
       setFormSubmitted(true);
-      // Simulate API submit delay
       setTimeout(() => {
         setFormName("");
         setFormEmail("");
+        setFormCategory("lead-gen");
         setFormMessage("");
       }, 3000);
     }
