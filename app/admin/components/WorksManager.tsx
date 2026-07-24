@@ -245,10 +245,10 @@ export default function WorksManager() {
                       onClick={() => handleDelete(w.id)}
                       style={s.delBtn}
                       title="Delete"
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.2)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.08)")}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.3)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.12)")}
                     >
-                      🗑
+                      <span style={{ color: "#f87171", fontSize: "16px", lineHeight: 1, fontWeight: 700 }}>✕</span>
                     </button>
                   </div>
                 </div>
@@ -449,7 +449,7 @@ const s: Record<string, React.CSSProperties> = {
   imgTag: { color: "rgba(255,255,255,0.3)", fontSize: "10px", padding: "1px 4px" },
   workActions: { display: "flex", gap: "4px", flexShrink: 0 },
   editBtn: { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px" },
-  delBtn: { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "6px", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px", transition: "background 0.2s" },
+  delBtn: { background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.35)", borderRadius: "6px", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "background 0.2s", flexShrink: 0 },
   emptyState: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px", color: "rgba(255,255,255,0.3)", textAlign: "center" },
   seedBtn: { background: "rgba(99,102,241,0.2)", border: "1px solid rgba(99,102,241,0.3)", borderRadius: "8px", color: "#818cf8", padding: "8px 16px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
   formCol: { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "16px", display: "flex", flexDirection: "column" },
